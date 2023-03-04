@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.cdnfonts.com/css/monopoly" rel="stylesheet">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <title>Monopoly</title>
+</head>
+<body>
+    <section class="setup">
+        <nav>
+            <img src="img/logo.png" alt="logo">
+            <ul>
+                <li class="setup__tab tab_player light-blue" onclick="menuSetup('player')"><div>Player</div></li>
+                <li class="setup__tab tab_company orange" onclick="menuSetup('company')"><div>Company</div></li>
+                <li class="setup__tab tab_setting green" onclick="menuSetup('setting')"><div>Setting</div></li>
+            </ul>
+        </nav>
+
+        <div class="setup__input">
+            <div class="input_player">
+                <input type="text" id="text_input_player" placeholder="Player name">
+                <input type="button" value="Add player" class="btn_input_player">
+            </div>
+            <div class="input_company hidden">
+                <input type="text" id="text_input_company" placeholder="Company name">
+                <input type="button" value="Add company" class="btn_input_company">
+            </div>
+            <div class="input_setting hidden">
+                <p>Max banknote value</p>
+                <input type="number" id="text_input_banknote" placeholder="Value">
+                <input type="button" value="START GAME" class="btn_input_start">
+            </div>
+        </div>
+
+        <div class="setup__list">
+            <div class="list_player">
+                <h3 class="title">Player (8)</h3>
+            </div>
+            <div class="list_company">
+                <h3 class="title">Company (4)</h3>
+            </div>
+        </div>
+
+        <div class="setup__confirmation">
+            <div class="display_confirmation">
+                <h3 class="title">Confirmation</h3>
+                <h4>Max banknote value</h4>
+                <p class="banknote_value"></p>
+                <div class="confirmation__list">
+                    <div class="confirmation_player">
+                        <h3>Player (<span class="confirmation_player_number"></span>)</h3>
+                    </div>
+                    <div class="confirmation_company">
+                        <h3>Company (<span class="confirmation_company_number"></span>)</h3>
+                    </div>
+                </div>
+                <input type="button" value="START" class="btn_confirmation_start">
+            </div>
+        </div>
+    </section>
+
+    <section class="game">
+        <nav>
+            <ul class="game__menu_tab">
+                <li class="game__tab_player">Player</li>
+                <li class="game__tab_company">Company</li>
+            </ul>
+            <ul class="game__menu_player">
+            </ul>
+            <ul class="game__menu_company" style="display: none;"></ul>
+        </nav>
+
+        <div class="game__view">
+            <div class="game__view_player">
+                <!-- generated in js -->
+
+            </div>
+            <div class="game__view_company">
+                <!-- generated in js -->
+            </div>
+        </div>
+
+        <div class="game__action_btn">
+            <button class="action_btn">Action(s)</button>
+            <button class="turn_btn">Next turn</button>
+        </div>
+    </section>
+
+    <section class="turn__popup">
+        
+    </section>
+
+    <script src="main.js"></script>
+</body>
+</html>

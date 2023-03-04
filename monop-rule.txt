@@ -1,0 +1,19 @@
+Epargne :
+max : 5x bank note
+a 20%/3tour = 15 tours
+
+Entreprise :
+
+Prix :  2x max - 10x max
+Max : 10x valeur de base 
+
+Gain :
+  P0 - P3:
+    -10 / +10
+  P4 - P6:
+    -20 / +20
+  P7 - 10 :
+    -30 / +30
+
+Revenue :
+25% des parts / 5 tour
