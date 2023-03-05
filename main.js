@@ -1,7 +1,7 @@
 class Player {
-    constructor(name, epargne, stocks) {
+    constructor(name, savings, stocks) {
         this.name = name
-        this.epargne = epargne
+        this.savings = savings
         this.stocks = stocks
     }
 }
@@ -130,7 +130,9 @@ function addPlayerOrCompany(str, type) {
     })
 }
 
-let maxBanknoteValue = 0
+let maxBanknoteValue = 50000
+let minBanknoteValue = Math.round(maxBanknoteValue / 500)
+
 let textInputBanknote = document.querySelector("#text_input_banknote")
 
 let btnInputStart = document.querySelector(".btn_input_start")
@@ -278,14 +280,14 @@ function generateCompanyValue(input) {
 
 function createGameObject() {
     companyList.forEach(e => {
-        let company = new Entreprise(e, generateCompanyValue(500 /*maxBanknoteValue*/), 0)
+        let company = new Entreprise(e, generateCompanyValue(50000 /*maxBanknoteValue*/), 0)
         companyListObject.push(company)
     })
 
     playerList.forEach(e => {
         let stocks = []
         companyList.forEach(e => {
-            let stock = new Stocks(e, 0)
+            let stock = new Stocks(e, getRandomInt(4))
             stocks.push(stock)
         })
         let player = new Player(e, 0, stocks)
@@ -306,7 +308,7 @@ function createGameView() {
         view.style.display = "none"
         view.innerHTML = `
             <h2>${e.name}</h2>
-            <h3>Savings : <span class="saving_player_${playerListObject.indexOf(e) + 1}">0€</span></h3>
+            <h3>Savings : <span class="saving_player_${playerListObject.indexOf(e) + 1}">${e.savings}€</span></h3>
             <div class="stocks_player_${playerListObject.indexOf(e) + 1}">
                 <h3>Stocks</h3>
                 ${e.stocks.map(e => {
@@ -333,7 +335,7 @@ function createGameView() {
         company.style.display = "none"
         company.innerHTML = `
             <h2>${e.name}</h2>
-            <h3>Start value : <span>${e.startCapital} €</span></h3>
+            <h3>Start value : <span>${e.startCapital}€</span></h3>
             <h3>Capital : <span>${e.capital}€</span></h3>
             <h3>Stock(s) sold : <span>${e.sold}</span></h3>
             <div class="company_grid">
@@ -362,7 +364,7 @@ function validValue(value) {
     if (value === undefined) {
         return ""
     }
-    return value + " €"
+    return value + "€"
 }
 
 function gameMenu(tab) {
@@ -390,10 +392,12 @@ function gameMenu(tab) {
 }
 
 let actionBtn = document.querySelector(".action_btn")
+let turnPopup = document.querySelector(".turn__popup")
+let turnDisplay = document.querySelector(".turn__display")
+let closeAction = document.querySelector(".close_action")
 
 actionBtn.addEventListener("click", () => {
-    
-    
+    turnPopup.style.transform = "translateX(100%)"
 
     // let newValue = Math.round((companyListObject[0].value[turn - 1] * 1.1) / 10) * 10
     // companyListObject[0].value.push(newValue)
@@ -401,3 +405,79 @@ actionBtn.addEventListener("click", () => {
 
     createGameView()
 })
+
+closeAction.addEventListener("click", () => {
+    turnPopup.style.transform = "translateX(0%)"
+})
+
+turnPopup.addEventListener("click", e => {
+    e.preventDefault()
+    closeAction.click()
+})
+
+turnDisplay.addEventListener("click", e => {
+    e.stopPropagation()
+})
+
+function createTurnGameView(viewType) {
+    let stocksEarning = document.querySelector(".stocks_earning")
+    let savingsEarning = document.querySelector(".savings_earning")
+
+    switch (viewType) {
+        case "stocks":
+            stocksEarning.style.display = "block"
+            savingsEarning.style.display = "none"
+            calculStocks()
+            break;
+        case "savings":
+            stocksEarning.style.display = "none"
+            savingsEarning.style.display = "block"
+            calculSavings()
+            break;
+        case "stocksAndSavings":
+            stocksEarning.style.display = "block"
+            savingsEarning.style.display = "block"
+            calculStocks()
+            calculSavings()
+            break;
+    }
+}
+
+function calculStocks() {
+    let stocksEarningList = document.querySelector(".stocks_earning_list")
+    stocksEarningList.innerHTML = ""
+
+    playerListObject.forEach(e => {
+        console.log(e)
+        let totalEarning = 0
+        let companyNumer = 0
+
+        e.stocks.forEach(e => {
+            totalEarning += e.quantity * companyListObject[companyNumer].value[turn] / 40
+            companyNumer += 1
+        })
+
+        totalEarning = Math.round(totalEarning / minBanknoteValue) * minBanknoteValue
+        
+        stocksEarningList.innerHTML += `
+            <p>${e.name} : ${totalEarning}€</p>
+        `
+    })
+}
+
+function calculSavings() {
+    let savingsEarningList = document.querySelector(".savings_earning_list")
+    savingsEarningList.innerHTML = ""
+
+    playerListObject.forEach(e => {
+        let totalEarning = Math.round(e.savings / minBanknoteValue) * minBanknoteValue
+        
+        savingsEarningList.innerHTML += `
+            <p>${e.name} : ${totalEarning}€</p>
+        `
+    })
+}
+
+function createPlayerTurnView() {
+    
+}
