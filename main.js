@@ -478,6 +478,40 @@ function calculSavings() {
     })
 }
 
-function createPlayerTurnView() {
-    
+let tempSavingValue = 0
+
+function createPlayerTurnView(playerObject) {
+    document.querySelector(".turn__player_name").innerHTML = playerObject.name
+    document.querySelector(".max_savings_value").innerHTML = maxBanknoteValue * 5
+
+    document.querySelector(".savings_player_current_value").innerHTML = playerObject.savings + "€"
+
+    tempSavingValue = 0
+
+    let classBtnSavings = ["add_1", "add_2", "remove_1", "remove_2"]
+    classBtnSavings.forEach((className, index) => {
+        document.querySelector("." + className).addEventListener("click", () => {
+            let sign = (index < 2) ? 1 : -1
+            let amount = (index % 2 === 0) ? maxBanknoteValue / 50 : maxBanknoteValue / 5;
+            let savings = playerObject.savings + tempSavingValue
+            if (savings + sign * amount < 0 || savings + sign * amount > maxBanknoteValue * 5) {
+                return
+            }
+            tempSavingValue += sign * amount
+            updateSavingValue(tempSavingValue)
+        })
+    })
+
+
 }
+
+function updateSavingValue(value) {
+    let savingsPlayerAddValue = document.querySelector(".savings_player_add_value")
+    savingsPlayerAddValue.style.color = (value > 0) ? "green" : "red";
+    savingsPlayerAddValue.innerHTML = `${(value > 0) ? "+" : "-"}${Math.abs(value)}€`;
+
+    let savingsPlayerFinalValue = document.querySelector(".savings_player_final_value")
+    savingsPlayerFinalValue.innerHTML = playerListObject[0].savings + value + "€"
+}
+
+createPlayerTurnView(playerListObject[0])

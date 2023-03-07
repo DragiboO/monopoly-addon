@@ -441,13 +441,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem 0;
+  padding: 0.75rem 0;
   border-bottom: black solid 2px;
 }
 .turn__popup .turn__display .turn__player .savings_player h4 {
   width: 80%;
   font-size: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -479,12 +479,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.5rem;
 }
 .turn__popup .turn__display .turn__player .savings_player > div .savings_player_input > div {
   width: 100%;
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
+  gap: 0.5rem;
 }
 .turn__popup .turn__display .turn__player .savings_player > div .savings_player_input > div input {
   height: 2rem;
@@ -495,10 +495,10 @@ body {
   text-align: center;
 }
 .turn__popup .turn__display .turn__player .savings_player > div .savings_player_input > div .btn_input_savings_add {
-  background-color: green;
+  background-color: var(--property-green);
 }
 .turn__popup .turn__display .turn__player .savings_player > div .savings_player_input > div .btn_input_savings_remove {
-  background-color: #cf0000;
+  background-color: var(--property-red);
 }
 .turn__popup .turn__display .turn__player .savings_player > div .savings_player_input #text_input_savings {
   width: 5rem;
@@ -513,13 +513,66 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1rem 0;
+  padding: 0.75rem 0;
+  border-bottom: black solid 2px;
 }
 .turn__popup .turn__display .turn__player .stocks_player h4 {
   width: 80%;
   text-align: left;
   font-size: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
+}
+.turn__popup .turn__display .turn__player .stocks_player .stocks_list_player {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.turn__popup .turn__display .turn__player .stocks_player .stocks_list_player > div {
+  width: 80%;
+  font-size: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.turn__popup .turn__display .turn__player .stocks_player .stocks_list_player > div > div {
+  display: flex;
+  gap: 0.5rem;
+}
+.turn__popup .turn__display .turn__player .stocks_player .stocks_list_player > div > div input {
+  height: 2rem;
+  width: 2rem;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  text-align: center;
+}
+.turn__popup .turn__display .turn__player .stocks_player .stocks_list_player > div > div .btn_input_invest_add {
+  background-color: var(--property-green);
+}
+.turn__popup .turn__display .turn__player .stocks_player .stocks_list_player > div > div .btn_input_invest_remove {
+  background-color: var(--property-red);
+}
+.turn__popup .turn__display .turn__player .summary_player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 0;
+}
+.turn__popup .turn__display .turn__player .summary_player h4 {
+  width: 80%;
+  text-align: left;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.turn__popup .turn__display .turn__player .summary_player p {
+  width: 80%;
+  text-align: left;
+  font-size: 1.25rem;
+}
+.turn__popup .turn__display .turn__player .summary_player p span {
+  padding: 0 0.125rem;
 }
 
 /*# sourceMappingURL=style.css.map */
