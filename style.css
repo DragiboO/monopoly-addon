@@ -265,6 +265,7 @@ body {
   margin-bottom: 2rem;
   padding: 0.5rem 1.5rem;
   border: black solid 4px;
+  min-width: 80%;
 }
 .game .game__view .game__view_player > div h3 {
   font-size: 2.5rem;
@@ -292,6 +293,7 @@ body {
   margin-bottom: 1rem;
   padding: 0.5rem 1.5rem;
   border: black solid 4px;
+  min-width: 90%;
 }
 .game .game__view .game__view_company > div > :nth-child(2),
 .game .game__view .game__view_company > div > :nth-child(4) {
@@ -306,6 +308,7 @@ body {
 }
 .game .game__view .game__view_company > div .company_grid {
   display: grid;
+  min-width: 90%;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(2, 1fr);
   border: black solid 1px;
@@ -423,6 +426,100 @@ body {
 .turn__popup .turn__display .turn__action .close_action {
   border-left: black solid 2px;
   background-color: #cf0000;
+}
+.turn__popup .turn__display .turn__player {
+  flex-grow: 1;
+  width: 100%;
+}
+.turn__popup .turn__display .turn__player h3 {
+  font-size: 3.5rem;
+  text-align: center;
+  padding: 1rem 0;
+  border-bottom: black solid 4px;
+}
+.turn__popup .turn__display .turn__player .savings_player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: black solid 2px;
+}
+.turn__popup .turn__display .turn__player .savings_player h4 {
+  width: 80%;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.turn__popup .turn__display .turn__player .savings_player h4 span {
+  font-size: 1.5rem;
+}
+.turn__popup .turn__display .turn__player .savings_player > div {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+}
+.turn__popup .turn__display .turn__player .savings_player > div .savings_player_value {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content: space-between;
+}
+.turn__popup .turn__display .turn__player .savings_player > div .savings_player_value p:nth-child(1),
+.turn__popup .turn__display .turn__player .savings_player > div .savings_player_value p:nth-child(3) {
+  font-size: 1.25rem;
+}
+.turn__popup .turn__display .turn__player .savings_player > div .savings_player_value p:nth-child(3) {
+  border-top: #3d3d3d solid 2px;
+  margin-top: 0.5rem;
+  color: #3d3d3d;
+}
+.turn__popup .turn__display .turn__player .savings_player > div .savings_player_input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.turn__popup .turn__display .turn__player .savings_player > div .savings_player_input > div {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.turn__popup .turn__display .turn__player .savings_player > div .savings_player_input > div input {
+  height: 2rem;
+  width: 2rem;
+  font-size: 1.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  text-align: center;
+}
+.turn__popup .turn__display .turn__player .savings_player > div .savings_player_input > div .btn_input_savings_add {
+  background-color: green;
+}
+.turn__popup .turn__display .turn__player .savings_player > div .savings_player_input > div .btn_input_savings_remove {
+  background-color: #cf0000;
+}
+.turn__popup .turn__display .turn__player .savings_player > div .savings_player_input #text_input_savings {
+  width: 5rem;
+  height: 2rem;
+  font-size: 1.25rem;
+  padding: 0 0.25rem;
+  border: black solid 1px;
+  border-radius: 0.25rem;
+  background-color: var(--main-green-darken);
+}
+.turn__popup .turn__display .turn__player .stocks_player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+}
+.turn__popup .turn__display .turn__player .stocks_player h4 {
+  width: 80%;
+  text-align: left;
+  font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
 /*# sourceMappingURL=style.css.map */
