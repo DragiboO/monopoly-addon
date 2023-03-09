@@ -549,10 +549,10 @@ body {
   text-align: center;
 }
 .turn__popup .turn__display .turn__player .stocks_player .stocks_list_player > div > div .btn_input_invest_add {
-  background-color: var(--property-green);
+  background-color: green;
 }
 .turn__popup .turn__display .turn__player .stocks_player .stocks_list_player > div > div .btn_input_invest_remove {
-  background-color: var(--property-red);
+  background-color: red;
 }
 .turn__popup .turn__display .turn__player .summary_player {
   display: flex;

@@ -287,12 +287,23 @@ function createGameObject() {
     playerList.forEach(e => {
         let stocks = []
         companyList.forEach(e => {
-            let stock = new Stocks(e, getRandomInt(4))
+            let stock = new Stocks(e, getRandomInt(2))
             stocks.push(stock)
         })
-        let player = new Player(e, 0, stocks)
+        let player = new Player(e, getRandomInt(100000), stocks)
         playerListObject.push(player)
     })
+
+    // to count during test
+    companyListObject.forEach(e => {
+        let countSold = 0
+        let index = companyListObject.indexOf(e)
+        playerListObject.forEach(e => {
+            countSold += e.stocks[index].quantity
+        })
+        e.sold = countSold
+    })
+    //
 }
 
 function createGameView() {
@@ -408,6 +419,8 @@ actionBtn.addEventListener("click", () => {
 
 closeAction.addEventListener("click", () => {
     turnPopup.style.transform = "translateX(0%)"
+
+    //need to add the view of the actual turn object (player or company) when the popup is closed
 })
 
 turnPopup.addEventListener("click", e => {
@@ -479,14 +492,18 @@ function calculSavings() {
 }
 
 let tempSavingValue = 0
+let tempInvestmentValue = []
 
 function createPlayerTurnView(playerObject) {
     document.querySelector(".turn__player_name").innerHTML = playerObject.name
     document.querySelector(".max_savings_value").innerHTML = maxBanknoteValue * 5
 
     document.querySelector(".savings_player_current_value").innerHTML = playerObject.savings + "€"
+    document.querySelector(".savings_player_final_value").innerHTML = playerObject.savings + "€"
 
     tempSavingValue = 0
+
+    updateSavingBtn(playerObject.savings)
 
     let classBtnSavings = ["add_1", "add_2", "remove_1", "remove_2"]
     classBtnSavings.forEach((className, index) => {
@@ -498,20 +515,162 @@ function createPlayerTurnView(playerObject) {
                 return
             }
             tempSavingValue += sign * amount
-            updateSavingValue(tempSavingValue)
+            updateSavingValue(playerObject, tempSavingValue)
         })
     })
 
+    let stocksListPlayer = document.querySelector(".stocks_list_player")
 
+    tempInvestmentValue = []
+
+    companyListObject.forEach((e, index) => {
+        tempInvestmentValue.push(0)
+        stocksListPlayer.innerHTML += `
+            <div class="stocks_to_invest">
+                <p class="stocks_invest_company_${index}">${e.name} (${playerObject.stocks[index].quantity}/${e.sold})</p>
+                <div>
+                    <input type="button" value="+" class="btn_input_invest_add invest_add_${index}" onclick="updateInvestPlayer('${playerObject.name}', ${index}, 'add')">
+                    <input type="button" value="-" class="btn_input_invest_remove invest_remove_${index}" onclick="updateInvestPlayer('${playerObject.name}', ${index}, 'remove')">
+                </div>
+            </div>
+        `
+    })
+
+    updateBtnInvest(playerObject, tempInvestmentValue)
 }
 
-function updateSavingValue(value) {
+function updateSavingValue(playerObject, value) {
     let savingsPlayerAddValue = document.querySelector(".savings_player_add_value")
     savingsPlayerAddValue.style.color = (value > 0) ? "green" : "red";
     savingsPlayerAddValue.innerHTML = `${(value > 0) ? "+" : "-"}${Math.abs(value)}€`;
 
     let savingsPlayerFinalValue = document.querySelector(".savings_player_final_value")
-    savingsPlayerFinalValue.innerHTML = playerListObject[0].savings + value + "€"
+    savingsPlayerFinalValue.innerHTML = playerObject.savings + value + "€"
+
+    let summarySavingsValue = document.querySelector(".summary_savings_value")
+    if (value > 0) {
+        summarySavingsValue.innerHTML = value + "€"
+        summarySavingsValue.style.color = "green"
+    } else {
+        summarySavingsValue.innerHTML = value + "€"
+        summarySavingsValue.style.color = "red";
+    }
+
+    console.log(tempSavingValue, tempInvestmentValue)
+
+    updateSavingBtn(playerObject.savings + value)
+    updateSummaryTotalValue(tempSavingValue, tempInvestmentValue)
 }
 
-createPlayerTurnView(playerListObject[0])
+function updateSavingBtn(value) {
+    let classBtnSavings = ["add_1", "add_2", "remove_1", "remove_2"]
+    classBtnSavings.forEach((className, index) => {
+        switch (index) {
+            case 0:
+                if (value > maxBanknoteValue * 5 - maxBanknoteValue / 50) {
+                    document.querySelector("." + className).style.backgroundColor = "grey"
+                } else {
+                    document.querySelector("." + className).style.backgroundColor = "green"
+                }
+                break;
+            case 1:
+                if (value > maxBanknoteValue * 5 - maxBanknoteValue / 5) {
+                    document.querySelector("." + className).style.backgroundColor = "grey"
+                } else {
+                    document.querySelector("." + className).style.backgroundColor = "green"
+                }
+                break;
+            case 2:
+                if (value < maxBanknoteValue / 50) {
+                    document.querySelector("." + className).style.backgroundColor = "grey"
+                } else {
+                    document.querySelector("." + className).style.backgroundColor = "red"
+                }
+                break;
+            case 3:
+                if (value < maxBanknoteValue / 5) {
+                    document.querySelector("." + className).style.backgroundColor = "grey"
+                } else {
+                    document.querySelector("." + className).style.backgroundColor = "red"
+                }
+                break;
+        }
+    })
+}
+
+function updateInvestPlayer(player, compId, type) {
+    for (let i = 0; i < playerListObject.length; i++) {
+        if (playerListObject[i].name === player) {
+            if (type === "add") {
+                if (companyListObject[compId].sold + tempInvestmentValue[compId] < 10) {
+                    tempInvestmentValue[compId] += 1
+                    document.querySelector(".stocks_invest_company_" + compId).innerHTML = `${companyListObject[compId].name} (${playerListObject[i].stocks[compId].quantity + tempInvestmentValue[compId]}/${companyListObject[compId].sold + tempInvestmentValue[compId]})`
+                    // if (companyListObject[compId].sold + tempInvestmentValue[compId] === 10) {
+                    //     document.querySelector(".invest_add_" + compId).style.backgroundColor = "grey"
+                    // }
+                }
+            }
+            if (type === "remove") {
+                if (playerListObject[i].stocks[compId].quantity + tempInvestmentValue[compId] > 0) {
+                    tempInvestmentValue[compId] -= 1
+                    document.querySelector(".stocks_invest_company_" + compId).innerHTML = `${companyListObject[compId].name} (${playerListObject[i].stocks[compId].quantity + tempInvestmentValue[compId]}/${companyListObject[compId].sold + tempInvestmentValue[compId]})`
+                    // if (playerListObject[i].stocks[compId].quantity + tempInvestmentValue[compId] === 0) {
+                    //     document.querySelector(".invest_remove_" + compId).style.backgroundColor = "grey"
+                    // }
+                }
+            }
+
+            let summaryInvestValue = document.querySelector(".summary_invest_value")
+            let totalInvestValue = 0
+            for (let i = 0; i < tempInvestmentValue.length; i++) {
+                totalInvestValue += tempInvestmentValue[i] * (companyListObject[i].capital / 10)
+            }
+            if (totalInvestValue > 0) {
+                summaryInvestValue.innerHTML = totalInvestValue + "€"
+                summaryInvestValue.style.color = "green"
+            } else {
+                summaryInvestValue.innerHTML = totalInvestValue + "€"
+                summaryInvestValue.style.color = "red"
+            }
+            
+
+            updateBtnInvest(playerListObject[i], tempInvestmentValue)
+            updateSummaryTotalValue(tempSavingValue, tempInvestmentValue)
+        }
+    }
+}
+
+function updateBtnInvest(playerObject, tempInvestmentValue) {
+    for (let i = 0; i < companyListObject.length; i++) {
+        if (companyListObject[i].sold + tempInvestmentValue[i] < 10) {
+            document.querySelector(".invest_add_" + i).style.backgroundColor = "green"
+        }
+        if (playerObject.stocks[i].quantity + tempInvestmentValue[i] > 0) {
+            document.querySelector(".invest_remove_" + i).style.backgroundColor = "red"
+        }
+        if (companyListObject[i].sold + tempInvestmentValue[i] === 10) {
+            document.querySelector(".invest_add_" + i).style.backgroundColor = "grey"
+        }
+        if (playerObject.stocks[i].quantity + tempInvestmentValue[i] === 0) {
+            document.querySelector(".invest_remove_" + i).style.backgroundColor = "grey"
+        }
+    }
+}
+
+function updateSummaryTotalValue(tempSavingValue, tempInvestmentValue) {
+    let summaryTotal = document.querySelector(".summary_total")
+    let totalValue = 0
+    for (let i = 0; i < tempInvestmentValue.length; i++) {
+        totalValue += tempInvestmentValue[i] * (companyListObject[i].capital / 10)
+    }
+    totalValue += tempSavingValue
+    summaryTotal.innerHTML = totalValue + "€"
+
+    if (totalValue > 0) {
+        summaryTotal.style.color = "green"
+    } else {
+        summaryTotal.style.color = "red"
+    }
+}
+
+createPlayerTurnView(playerListObject[4])
