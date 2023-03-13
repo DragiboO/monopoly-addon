@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,14 +10,21 @@
     <link rel="stylesheet" href="style.css">
     <title>Monopoly</title>
 </head>
+
 <body>
     <section class="setup">
         <nav>
             <img src="img/logo.png" alt="logo">
             <ul>
-                <li class="setup__tab tab_player light-blue" onclick="menuSetup('player')"><div>Player</div></li>
-                <li class="setup__tab tab_company orange" onclick="menuSetup('company')"><div>Company</div></li>
-                <li class="setup__tab tab_setting green" onclick="menuSetup('setting')"><div>Setting</div></li>
+                <li class="setup__tab tab_player light-blue" onclick="menuSetup('player')">
+                    <div>Player</div>
+                </li>
+                <li class="setup__tab tab_company orange" onclick="menuSetup('company')">
+                    <div>Company</div>
+                </li>
+                <li class="setup__tab tab_setting green" onclick="menuSetup('setting')">
+                    <div>Setting</div>
+                </li>
             </ul>
         </nav>
 
@@ -107,7 +115,7 @@
                 </div>
             </div>
 
-            <div class="turn__player" style="display: block;">
+            <div class="turn__player" style="display: none;">
                 <h3 class="turn__player_name"></h3>
                 <div class="savings_player">
                     <h4 class="savings_player_title">Savings <span>(Max: <span class="max_savings_value"></span>€)</span></h4>
@@ -121,7 +129,7 @@
                             <div>
                                 <input type="button" value="+" class="btn_input_savings_add add_1">
                                 <input type="button" value="++" class="btn_input_savings_add add_2">
-                                
+
                             </div>
                             <div>
                                 <input type="button" value="-" class="btn_input_savings_remove remove_1">
@@ -138,9 +146,10 @@
                 </div>
                 <div class="summary_player">
                     <h4>Summary</h4>
+                    <p class="summary_desc">(What you have to give to the bank)</p>
                     <p>
                         <span class="summary_savings_value">0€</span>
-                        <span>&&</span>
+                        <span>&</span>
                         <span class="summary_invest_value">0€</span>
                         <span>=</span>
                         <span class="summary_total">0€</span>
@@ -148,7 +157,29 @@
                 </div>
             </div>
 
-            <div class="turn__company"></div>
+            <div class="turn__company">
+                <h3 class="turn__company_name"></h3>
+                <div class="company_grid_container">
+                    <div class="company_grid_roll">
+                        <button class="grid_middle"></button>
+                        <div class="company grid_1"></div>
+                        <div class="company grid_2"></div>
+                        <div class="company grid_3"></div>
+                        <div class="company grid_4"></div>
+                        <div class="company grid_12"></div>
+                        <div class="company grid_5"></div>
+                        <div class="company grid_11"></div>
+                        <div class="company grid_6"></div>
+                        <div class="company grid_10"></div>
+                        <div class="company grid_9"></div>
+                        <div class="company grid_8"></div>
+                        <div class="company grid_7"></div>
+                    </div>
+                </div>
+                <div class="company_result">
+                    <!-- generated via js -->
+                </div>
+            </div>
 
             <div class="turn__finish" style="display: none;">
                 <p>ACTION FINISHED</p>
@@ -163,4 +194,5 @@
 
     <script src="main.js"></script>
 </body>
+
 </html>

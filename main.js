@@ -28,7 +28,11 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max)
 }
 
-let colorList = ['#864C39','#bde0f4','#C63883','#de911b','#DB2428','#FFF004','#60ad5b','#0067A4']
+function generateRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+let colorList = ['#864C39', '#bde0f4', '#C63883', '#de911b', '#DB2428', '#FFF004', '#60ad5b', '#0067A4']
 let playerList = ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7", "Player 8"]
 let companyList = ["Company 1", "Company 2", "Company 3", "Company 4"]
 
@@ -45,7 +49,7 @@ function menuSetup(tab) {
         company: ".input_company",
         setting: ".input_setting",
     }
-    
+
     for (const selector in selectors) {
         const element = document.querySelector(selectors[selector])
         if (selector === tab) {
@@ -62,7 +66,7 @@ let btnInputCompany = document.querySelector(".btn_input_company")
 let textInputCompany = document.querySelector("#text_input_company")
 
 btnInputPlayer.addEventListener("click", () => {
-    if(playerList.length < 8) {
+    if (playerList.length < 8) {
         addPlayerOrCompany(textInputPlayer.value, "player")
         textInputPlayer.value = ""
     } else {
@@ -78,7 +82,7 @@ textInputPlayer.addEventListener("keypress", e => {
 })
 
 btnInputCompany.addEventListener("click", () => {
-    if(companyList.length < 4) {
+    if (companyList.length < 4) {
         addPlayerOrCompany(textInputCompany.value, "company")
         textInputCompany.value = ""
     } else {
@@ -209,7 +213,7 @@ function createGameMenu() {
         const liElement = document.createElement('li');
         const textNode = document.createTextNode(playerList[i]);
         liElement.style.backgroundColor = colorList[i];
-        liElement.setAttribute("onclick", "gameMenu('player" + (i + 1) +"')")
+        liElement.setAttribute("onclick", "gameMenu('player" + (i + 1) + "')")
 
         if (numPlayers === 2) {
             liElement.style.width = '50%';
@@ -237,7 +241,7 @@ function createGameMenu() {
         const liElement = document.createElement('li');
         const textNode = document.createTextNode(companyList[i]);
         liElement.style.backgroundColor = colorList[getRandomInt(colorList.length)];
-        liElement.setAttribute("onclick", "gameMenu('company" + (i + 1) +"')")
+        liElement.setAttribute("onclick", "gameMenu('company" + (i + 1) + "')")
 
         if (numCompanies === 2) {
             liElement.style.width = '50%';
@@ -351,13 +355,13 @@ function createGameView() {
             <h3>Stock(s) sold : <span>${e.sold}</span></h3>
             <div class="company_grid">
                 <div class="turn legend">Turn</div>
-                <div class="turn turn_-2">${validTurn(turn - 2)}</div>
-                <div class="turn turn_-1">${validTurn(turn - 1)}</div>
-                <div class="turn turn_actual">${validTurn(turn)}</div>
+                <div class="turn turn_-2">${validTurn(turn - 1)}</div>
+                <div class="turn turn_-1">${validTurn(turn)}</div>
+                <div class="turn turn_actual">${validTurn(turn + 1)}</div>
                 <div class="value legend">Value</div>
-                <div class="value value_-2">${validValue(e.value[turn - 2])}</div>
-                <div class="value value_-1">${validValue(e.value[turn - 1])}</div>
-                <div class="value value_actual">${validValue(e.value[turn])}</div>
+                <div class="value value_-2">${validValue(e.value[turn - 1])}</div>
+                <div class="value value_-1">${validValue(e.value[turn])}</div>
+                <div class="value value_actual">${validValue(e.value[turn + 1])}</div>
             </div>
         `
         gameViewCompany.appendChild(company)
@@ -409,17 +413,11 @@ let closeAction = document.querySelector(".close_action")
 
 actionBtn.addEventListener("click", () => {
     turnPopup.style.transform = "translateX(100%)"
-
-    // let newValue = Math.round((companyListObject[0].value[turn - 1] * 1.1) / 10) * 10
-    // companyListObject[0].value.push(newValue)
-    // console.log(companyListObject)
-
-    createGameView()
+    //createGameView()
 })
 
 closeAction.addEventListener("click", () => {
     turnPopup.style.transform = "translateX(0%)"
-
     //need to add the view of the actual turn object (player or company) when the popup is closed
 })
 
@@ -471,7 +469,7 @@ function calculStocks() {
         })
 
         totalEarning = Math.round(totalEarning / minBanknoteValue) * minBanknoteValue
-        
+
         stocksEarningList.innerHTML += `
             <p>${e.name} : ${totalEarning}€</p>
         `
@@ -484,7 +482,7 @@ function calculSavings() {
 
     playerListObject.forEach(e => {
         let totalEarning = Math.round(e.savings / minBanknoteValue) * minBanknoteValue
-        
+
         savingsEarningList.innerHTML += `
             <p>${e.name} : ${totalEarning}€</p>
         `
@@ -555,8 +553,6 @@ function updateSavingValue(playerObject, value) {
         summarySavingsValue.innerHTML = value + "€"
         summarySavingsValue.style.color = "red";
     }
-
-    console.log(tempSavingValue, tempInvestmentValue)
 
     updateSavingBtn(playerObject.savings + value)
     updateSummaryTotalValue(tempSavingValue, tempInvestmentValue)
@@ -632,7 +628,6 @@ function updateInvestPlayer(player, compId, type) {
                 summaryInvestValue.innerHTML = totalInvestValue + "€"
                 summaryInvestValue.style.color = "red"
             }
-            
 
             updateBtnInvest(playerListObject[i], tempInvestmentValue)
             updateSummaryTotalValue(tempSavingValue, tempInvestmentValue)
@@ -673,4 +668,139 @@ function updateSummaryTotalValue(tempSavingValue, tempInvestmentValue) {
     }
 }
 
-createPlayerTurnView(playerListObject[4])
+function createCompanyTurnView(companyObject) {
+    document.querySelector(".turn__company_name").innerHTML = companyObject.name
+    document.querySelector(".company_result").innerHTML = ""
+
+    let companySold = companyObject.sold
+    let min = 0
+    let max = 0
+
+    switch (true) {
+        case companySold >= 0 && companySold < 4:
+            min = -10
+            max = 10
+            break
+        case companySold >= 4 && companySold < 7:
+            min = -20
+            max = 20
+            break
+        case companySold >= 7 && companySold < 10:
+            min = -30
+            max = 30
+            break
+    }
+
+    for (let i = 1; i <= 12; i++) {
+        let percentage = generateRandomNumber(min, max)
+        let className = document.querySelector(".grid_" + i)
+        className.innerHTML = percentage
+        if (percentage > 0) {
+            className.style.color = "green"
+            className.style.border = "2px solid green"
+
+        } else {
+            className.style.color = "red"
+            className.style.border = "2px solid red"
+            className.style.backgroundColor = "rgb(247, 158, 158)"
+        }
+    }
+}
+
+let gridMiddle = document.querySelector(".grid_middle")
+let roll = false
+
+gridMiddle.addEventListener("click", function () {
+    if (roll === false) {
+        roll = true
+
+        companyWheel()
+        setTimeout(() => {
+            gridMiddle.style.backgroundColor = "hsl(94, 33%, 45%)"
+        }, 50)
+        setTimeout(() => {
+            gridMiddle.style.backgroundColor = "hsl(94, 33%, 75%)"
+        }, 400)
+    }
+})
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function companyWheel() {
+    let move = 24 + generateRandomNumber(0, 12)
+    let i = 1
+    let p = 0
+    let a = 0
+    while(move > 0) {
+        if (i === 13) {
+            i = 1
+        }
+        a = i
+        p = i - 1
+        if (i === 1) {
+            p = 12
+            a = 1
+        }
+        let caseP = document.querySelector(".grid_" + p)
+        let caseA = document.querySelector(".grid_" + a)
+        if (caseP.innerHTML > 0) {
+            caseP.style.backgroundColor = "hsl(94, 33%, 75%)"
+        } else {
+            caseP.style.backgroundColor = "hsl(0, 85%, 85%)"
+        }
+        if (caseA.innerHTML > 0) {
+            caseA.style.backgroundColor = "hsl(94, 33%, 45%)"
+        } else {
+            caseA.style.backgroundColor = "hsl(0, 85%, 70%)"
+        }
+        
+        let companyResult = document.querySelector(".company_result")
+        if (move === 1) {
+            let opacity = 0
+            if (caseA.innerHTML > 0) {
+                companyResult.style.backgroundImage = "url('img/stonks.webp')"
+            } else {
+                companyResult.style.backgroundImage = "url('img/not-stonks.webp')"
+            }
+            for (let i = 0; i < 100; i++) {
+                opacity += 0.01
+                companyResult.style.opacity = opacity
+                await sleep(4)
+            }
+            for (let i = 0; i < companyListObject.length; i++) {
+                if (companyListObject[i].name === document.querySelector(".turn__company_name").innerHTML) {
+                    companyResult.innerHTML += `<p>${companyListObject[i].capital}€</p>`
+                    await sleep(200)
+                    if (caseA.innerHTML > 0) {
+                        companyResult.innerHTML += `<img src="img/arrow-green.webp" alt="+" style="background-color: hsl(94, 33%, 75%);">`
+                        await sleep(200)
+                        companyResult.innerHTML += `<p style="background-color: hsl(94, 33%, 75%); color: green;">${calculateCompanyNewCapital(companyListObject[i].capital, caseA.innerHTML)}€</p>`
+                    } else {
+                        companyResult.innerHTML += `<img src="img/arrow-red.webp" alt="-" style="background-color: hsl(0, 85%, 85%);">`
+                        await sleep(200)
+                        companyResult.innerHTML += `<p style="background-color: hsl(0, 85%, 85%); color: red;">${calculateCompanyNewCapital(companyListObject[i].capital, caseA.innerHTML)}€</p>`
+                    }
+                }
+            }
+        }
+        await sleep(50 + ((1 / move * 10) * 100))
+        i++
+        move--
+    }
+}
+
+function calculateCompanyNewCapital(capital, percentage) {
+    if (percentage == 0) return capital
+    let newCapital = Math.round(capital * (1 + (parseInt(percentage) / 100)))
+    let capitalStep = 0
+    if (percentage > 0) {
+        capitalStep = Math.ceil(newCapital / (minBanknoteValue * 40))
+    } else {
+        capitalStep = Math.floor(newCapital / (minBanknoteValue * 40))
+    }
+    return capitalStep * minBanknoteValue * 40
+}
+
+createCompanyTurnView(companyListObject[0])
