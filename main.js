@@ -33,8 +33,8 @@ function generateRandomNumber(min, max) {
 }
 
 let colorList = ['#864C39', '#bde0f4', '#C63883', '#de911b', '#DB2428', '#FFF004', '#60ad5b', '#0067A4']
-let playerList = ["Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7", "Player 8"]
-let companyList = ["Company 1", "Company 2", "Company 3", "Company 4"]
+let playerList = [/*"Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7", "Player 8"*/]
+let companyList = [/*"Company 1", "Company 2", "Company 3", "Company 4"*/]
 
 let playerListObject = []
 let companyListObject = []
@@ -205,6 +205,8 @@ function createGameMenu() {
 
     createGameObject()
     createGameView()
+    createTurnOrder()
+    console.log(turnOrder)
 
     const numPlayers = playerList.length;
     const numCompanies = companyList.length;
@@ -256,8 +258,8 @@ function createGameMenu() {
     }
 }
 
-// to comment
-createGameMenu()
+// to comment when game is finished
+//createGameMenu()
 
 btnTabPlayer.addEventListener("click", () => {
     gameMenuPlayer.style.display = "flex"
@@ -284,29 +286,29 @@ function generateCompanyValue(input) {
 
 function createGameObject() {
     companyList.forEach(e => {
-        let company = new Entreprise(e, generateCompanyValue(50000 /*maxBanknoteValue*/), 0)
+        let company = new Entreprise(e, generateCompanyValue(maxBanknoteValue), 0)
         companyListObject.push(company)
     })
 
     playerList.forEach(e => {
         let stocks = []
         companyList.forEach(e => {
-            let stock = new Stocks(e, getRandomInt(2))
+            let stock = new Stocks(e, 0)
             stocks.push(stock)
         })
-        let player = new Player(e, getRandomInt(100000), stocks)
+        let player = new Player(e, 0, stocks)
         playerListObject.push(player)
     })
 
     // to count during test
-    companyListObject.forEach(e => {
-        let countSold = 0
-        let index = companyListObject.indexOf(e)
-        playerListObject.forEach(e => {
-            countSold += e.stocks[index].quantity
-        })
-        e.sold = countSold
-    })
+    // companyListObject.forEach(e => {
+    //     let countSold = 0
+    //     let index = companyListObject.indexOf(e)
+    //     playerListObject.forEach(e => {
+    //         countSold += e.stocks[index].quantity
+    //     })
+    //     e.sold = countSold
+    // })
     //
 }
 
@@ -601,18 +603,12 @@ function updateInvestPlayer(player, compId, type) {
                 if (companyListObject[compId].sold + tempInvestmentValue[compId] < 10) {
                     tempInvestmentValue[compId] += 1
                     document.querySelector(".stocks_invest_company_" + compId).innerHTML = `${companyListObject[compId].name} (${playerListObject[i].stocks[compId].quantity + tempInvestmentValue[compId]}/${companyListObject[compId].sold + tempInvestmentValue[compId]})`
-                    // if (companyListObject[compId].sold + tempInvestmentValue[compId] === 10) {
-                    //     document.querySelector(".invest_add_" + compId).style.backgroundColor = "grey"
-                    // }
                 }
             }
             if (type === "remove") {
                 if (playerListObject[i].stocks[compId].quantity + tempInvestmentValue[compId] > 0) {
                     tempInvestmentValue[compId] -= 1
                     document.querySelector(".stocks_invest_company_" + compId).innerHTML = `${companyListObject[compId].name} (${playerListObject[i].stocks[compId].quantity + tempInvestmentValue[compId]}/${companyListObject[compId].sold + tempInvestmentValue[compId]})`
-                    // if (playerListObject[i].stocks[compId].quantity + tempInvestmentValue[compId] === 0) {
-                    //     document.querySelector(".invest_remove_" + compId).style.backgroundColor = "grey"
-                    // }
                 }
             }
 
@@ -803,4 +799,19 @@ function calculateCompanyNewCapital(capital, percentage) {
     return capitalStep * minBanknoteValue * 40
 }
 
-createCompanyTurnView(companyListObject[0])
+// Game turn functions
+
+let turnOrder = []
+
+function createTurnOrder() {
+    for (let i = 0; i < playerListObject.length; i++) {
+        turnOrder.push(playerListObject[i].name)
+    }
+    for (let i = 0; i < companyListObject.length; i++) {
+        turnOrder.push(companyListObject[i].name)
+    }
+}
+
+function turnGame() {
+
+}
