@@ -1,6 +1,6 @@
 Epargne :
 max : 5x bank note
-a 20%/3tour = 15 tours
+a 15%/2tour = 13.3 tours
 
 Entreprise :
 
@@ -16,4 +16,4 @@ Gain :
     -30 / +30
 
 Revenue :
-25% des parts / 5 tour
+25% des parts / 3 tour

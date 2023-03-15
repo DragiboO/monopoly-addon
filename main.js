@@ -134,8 +134,8 @@ function addPlayerOrCompany(str, type) {
     })
 }
 
-let maxBanknoteValue = 50000
-let minBanknoteValue = Math.round(maxBanknoteValue / 500)
+let maxBanknoteValue = 0
+let minBanknoteValue = 0 
 
 let textInputBanknote = document.querySelector("#text_input_banknote")
 
@@ -205,8 +205,8 @@ function createGameMenu() {
 
     createGameObject()
     createGameView()
-    createTurnOrder()
-    console.log(turnOrder)
+    turn++
+    nextActionTurn()
 
     const numPlayers = playerList.length;
     const numCompanies = companyList.length;
@@ -245,7 +245,9 @@ function createGameMenu() {
         liElement.style.backgroundColor = colorList[getRandomInt(colorList.length)];
         liElement.setAttribute("onclick", "gameMenu('company" + (i + 1) + "')")
 
-        if (numCompanies === 2) {
+        if (numCompanies === 1) {
+            liElement.style.width = '100%';
+        } else if (numCompanies === 2) {
             liElement.style.width = '50%';
         } else if (numCompanies === 3) {
             liElement.style.width = i === 2 ? '100%' : '50%';
@@ -299,6 +301,8 @@ function createGameObject() {
         let player = new Player(e, 0, stocks)
         playerListObject.push(player)
     })
+
+    minBanknoteValue = Math.round(maxBanknoteValue / 500)
 
     // to count during test
     // companyListObject.forEach(e => {
@@ -445,11 +449,13 @@ function createTurnGameView(viewType) {
         case "savings":
             stocksEarning.style.display = "none"
             savingsEarning.style.display = "block"
+            savingsEarning.style.borderTop = "none"
             calculSavings()
             break;
         case "stocksAndSavings":
             stocksEarning.style.display = "block"
             savingsEarning.style.display = "block"
+            savingsEarning.style.borderTop = "black solid 4px"
             calculStocks()
             calculSavings()
             break;
@@ -461,13 +467,12 @@ function calculStocks() {
     stocksEarningList.innerHTML = ""
 
     playerListObject.forEach(e => {
-        console.log(e)
         let totalEarning = 0
-        let companyNumer = 0
+        let companyNumber = 0
 
         e.stocks.forEach(e => {
-            totalEarning += e.quantity * companyListObject[companyNumer].value[turn] / 40
-            companyNumer += 1
+            totalEarning += e.quantity * companyListObject[companyNumber].capital / 40
+            companyNumber += 1
         })
 
         totalEarning = Math.round(totalEarning / minBanknoteValue) * minBanknoteValue
@@ -483,7 +488,7 @@ function calculSavings() {
     savingsEarningList.innerHTML = ""
 
     playerListObject.forEach(e => {
-        let totalEarning = Math.round(e.savings / minBanknoteValue) * minBanknoteValue
+        let totalEarning = Math.round(e.savings * 0.15 / minBanknoteValue) * minBanknoteValue
 
         savingsEarningList.innerHTML += `
             <p>${e.name} : ${totalEarning}€</p>
@@ -520,6 +525,7 @@ function createPlayerTurnView(playerObject) {
     })
 
     let stocksListPlayer = document.querySelector(".stocks_list_player")
+    stocksListPlayer.innerHTML = ""
 
     tempInvestmentValue = []
 
@@ -667,6 +673,7 @@ function updateSummaryTotalValue(tempSavingValue, tempInvestmentValue) {
 function createCompanyTurnView(companyObject) {
     document.querySelector(".turn__company_name").innerHTML = companyObject.name
     document.querySelector(".company_result").innerHTML = ""
+    document.querySelector(".company_result").style.backgroundImage = "none"
 
     let companySold = companyObject.sold
     let min = 0
@@ -694,6 +701,7 @@ function createCompanyTurnView(companyObject) {
         if (percentage > 0) {
             className.style.color = "green"
             className.style.border = "2px solid green"
+            className.style.backgroundColor = "rgb(188, 212, 170)"
 
         } else {
             className.style.color = "red"
@@ -801,17 +809,60 @@ function calculateCompanyNewCapital(capital, percentage) {
 
 // Game turn functions
 
-let turnOrder = []
+let actionInTurn = -1
 
-function createTurnOrder() {
-    for (let i = 0; i < playerListObject.length; i++) {
-        turnOrder.push(playerListObject[i].name)
+function nextActionTurn() {
+    console.log("Turn" + turn)
+    actionInTurn++
+    console.log(actionInTurn)
+
+    if (actionInTurn >= 0 && actionInTurn < playerListObject.length) {
+        createPlayerTurnView(playerListObject[actionInTurn])
+        document.querySelector(".turn__player").style.display = "block"
+        document.querySelector(".turn__company").style.display = "none"
+        document.querySelector(".turn__game").style.display = "none"
     }
-    for (let i = 0; i < companyListObject.length; i++) {
-        turnOrder.push(companyListObject[i].name)
+
+    if (actionInTurn >= playerListObject.length && actionInTurn < playerListObject.length + companyListObject.length) {
+        createCompanyTurnView(companyListObject[actionInTurn - playerListObject.length])
+        document.querySelector(".turn__player").style.display = "none"
+        document.querySelector(".turn__company").style.display = "flex"
+        document.querySelector(".turn__game").style.display = "none"
+    }
+
+    if (actionInTurn === playerListObject.length + companyListObject.length - 1) {
+        //end turn
+        actionInTurn = -2
+    }
+
+    if (actionInTurn === -1) {
+        //test if special turn
+        if ((turn % 2 === 0 && turn !== 0) || (turn % 3 === 0 && turn !== 0)) {
+            if (turn % 2 === 0 && turn !== 0) {
+                createTurnGameView("savings")
+                document.querySelector(".turn__company").style.display = "none"
+                document.querySelector(".turn__game").style.display = "flex"
+            }
+            if (turn % 3 === 0 && turn !== 0) {
+                createTurnGameView("stocks")
+                document.querySelector(".turn__company").style.display = "none"
+                document.querySelector(".turn__game").style.display = "flex"
+            }
+            if (turn % 6 === 0 && turn !== 0) {
+                createTurnGameView("stocksAndSavings")
+                document.querySelector(".turn__company").style.display = "none"
+                document.querySelector(".turn__game").style.display = "flex"
+            }
+            actionInTurn = -1
+            turn++
+        } else {
+            actionInTurn = -1
+            turn++
+            nextActionTurn()
+        }
     }
 }
 
-function turnGame() {
-
-}
+document.querySelector(".confirm_action").addEventListener("click", function () {
+    nextActionTurn()
+})
