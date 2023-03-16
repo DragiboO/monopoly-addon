@@ -798,36 +798,32 @@ async function companyWheel() {
 function calculateCompanyNewCapital(capital, percentage) {
     if (percentage == 0) return capital
     let newCapital = Math.round(capital * (1 + (parseInt(percentage) / 100)))
-    let capitalStep = 0
-    if (percentage > 0) {
-        capitalStep = Math.ceil(newCapital / (minBanknoteValue * 40))
-    } else {
-        capitalStep = Math.floor(newCapital / (minBanknoteValue * 40))
-    }
-    return capitalStep * minBanknoteValue * 40
+
+    return Math.round(newCapital / minBanknoteValue) * minBanknoteValue
 }
 
 // Game turn functions
 
 let actionInTurn = -1
+let confirmationTurn = false
 
 function nextActionTurn() {
-    console.log("Turn" + turn)
+    confirmationTurn = false
     actionInTurn++
+    console.log("Turn" + turn)
     console.log(actionInTurn)
 
     if (actionInTurn >= 0 && actionInTurn < playerListObject.length) {
         createPlayerTurnView(playerListObject[actionInTurn])
+        document.querySelector(".turn__finish").style.display = "none"
         document.querySelector(".turn__player").style.display = "block"
-        document.querySelector(".turn__company").style.display = "none"
-        document.querySelector(".turn__game").style.display = "none"
     }
 
     if (actionInTurn >= playerListObject.length && actionInTurn < playerListObject.length + companyListObject.length) {
         createCompanyTurnView(companyListObject[actionInTurn - playerListObject.length])
-        document.querySelector(".turn__player").style.display = "none"
+        roll = false
+        document.querySelector(".turn__finish").style.display = "none"
         document.querySelector(".turn__company").style.display = "flex"
-        document.querySelector(".turn__game").style.display = "none"
     }
 
     if (actionInTurn === playerListObject.length + companyListObject.length - 1) {
@@ -840,17 +836,17 @@ function nextActionTurn() {
         if ((turn % 2 === 0 && turn !== 0) || (turn % 3 === 0 && turn !== 0)) {
             if (turn % 2 === 0 && turn !== 0) {
                 createTurnGameView("savings")
-                document.querySelector(".turn__company").style.display = "none"
+                document.querySelector(".turn__finish").style.display = "none"
                 document.querySelector(".turn__game").style.display = "flex"
             }
             if (turn % 3 === 0 && turn !== 0) {
                 createTurnGameView("stocks")
-                document.querySelector(".turn__company").style.display = "none"
+                document.querySelector(".turn__finish").style.display = "none"
                 document.querySelector(".turn__game").style.display = "flex"
             }
             if (turn % 6 === 0 && turn !== 0) {
                 createTurnGameView("stocksAndSavings")
-                document.querySelector(".turn__company").style.display = "none"
+                document.querySelector(".turn__finish").style.display = "none"
                 document.querySelector(".turn__game").style.display = "flex"
             }
             actionInTurn = -1
@@ -863,6 +859,21 @@ function nextActionTurn() {
     }
 }
 
-document.querySelector(".confirm_action").addEventListener("click", function () {
-    nextActionTurn()
-})
+function turnConfirmation() {
+    if (actionInTurn >= 0 && actionInTurn < playerListObject.length) {
+        document.querySelector(".turn__finish").style.display = "flex"
+        document.querySelector(".turn__player").style.display = "none"
+    }
+
+    if (actionInTurn >= playerListObject.length && actionInTurn < playerListObject.length + companyListObject.length) {
+        document.querySelector(".turn__finish").style.display = "flex"
+        document.querySelector(".turn__company").style.display = "none"
+    }
+
+    if (actionInTurn === -1) {
+        //test if special turn
+        document.querySelector(".turn__finish").style.display = "flex"
+        document.querySelector(".turn__game").style.display = "none"
+    }
+    confirmationTurn = true
+}
