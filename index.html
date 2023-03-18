@@ -93,7 +93,7 @@
         </div>
 
         <div class="game__action_btn">
-            <button class="action_btn" onclick="turnConfirmation()">Action(s)</button>
+            <button class="action_btn">Action(s)</button>
             <button class="turn_btn" onclick="nextActionTurn()">Next turn</button>
         </div>
     </section>
@@ -122,18 +122,18 @@
                     <div>
                         <div class="savings_player_value">
                             <p class="savings_player_current_value"></p>
-                            <p class="savings_player_add_value">+0€</p>
-                            <p class="savings_player_final_value">0€</p>
+                            <p class="savings_player_add_value"></p>
+                            <p class="savings_player_final_value"></p>
                         </div>
                         <div class="savings_player_input">
                             <div>
-                                <input type="button" value="+" class="btn_input_savings_add add_1">
-                                <input type="button" value="++" class="btn_input_savings_add add_2">
+                                <input type="button" value="+" class="btn_input_savings_add add_1" onclick="addOrRemoveSavings(1)">
+                                <input type="button" value="++" class="btn_input_savings_add add_2" onclick="addOrRemoveSavings(2)">
 
                             </div>
                             <div>
-                                <input type="button" value="-" class="btn_input_savings_remove remove_1">
-                                <input type="button" value="--" class="btn_input_savings_remove remove_2">
+                                <input type="button" value="-" class="btn_input_savings_remove remove_1" onclick="addOrRemoveSavings(-1)">
+                                <input type="button" value="--" class="btn_input_savings_remove remove_2" onclick="addOrRemoveSavings(-2)">
                             </div>
                         </div>
                     </div>
@@ -186,7 +186,7 @@
             </div>
 
             <div class="turn__action">
-                <div class="confirm_action">CONFIRM</div>
+                <div class="confirm_action" onclick="turnConfirmation()">CONFIRM</div>
                 <div class="close_action">CLOSE</div>
             </div>
         </div>

@@ -208,6 +208,8 @@ function createGameMenu() {
     turn++
     nextActionTurn()
 
+    document.querySelector(".turn_btn").style.animation = "none"
+
     const numPlayers = playerList.length;
     const numCompanies = companyList.length;
 
@@ -361,13 +363,13 @@ function createGameView() {
             <h3>Stock(s) sold : <span>${e.sold}</span></h3>
             <div class="company_grid">
                 <div class="turn legend">Turn</div>
-                <div class="turn turn_-2">${validTurn(turn - 1)}</div>
-                <div class="turn turn_-1">${validTurn(turn)}</div>
-                <div class="turn turn_actual">${validTurn(turn + 1)}</div>
+                <div class="turn turn_-2">${validTurn(turn - 2)}</div>
+                <div class="turn turn_-1">${validTurn(turn - 1)}</div>
+                <div class="turn turn_actual">${validTurn(turn)}</div>
                 <div class="value legend">Value</div>
-                <div class="value value_-2">${validValue(e.value[turn - 1])}</div>
-                <div class="value value_-1">${validValue(e.value[turn])}</div>
-                <div class="value value_actual">${validValue(e.value[turn + 1])}</div>
+                <div class="value value_-2">${validValue(e.value[turn - 2])}</div>
+                <div class="value value_-1">${validValue(e.value[turn - 1])}</div>
+                <div class="value value_actual">${validValue(e.value[turn])}</div>
             </div>
         `
         gameViewCompany.appendChild(company)
@@ -504,25 +506,35 @@ function createPlayerTurnView(playerObject) {
     document.querySelector(".max_savings_value").innerHTML = maxBanknoteValue * 5
 
     document.querySelector(".savings_player_current_value").innerHTML = playerObject.savings + "€"
+    document.querySelector(".savings_player_add_value").innerHTML = "+0€"
+    document.querySelector(".savings_player_add_value").style.color = "black"
     document.querySelector(".savings_player_final_value").innerHTML = playerObject.savings + "€"
+
+    document.querySelector(".summary_savings_value").innerHTML = "0€"
+    document.querySelector(".summary_savings_value").style.color = "black"
+    document.querySelector(".summary_invest_value").innerHTML = "0€"
+    document.querySelector(".summary_invest_value").style.color = "black"
+    document.querySelector(".summary_total").innerHTML = "0€"
+    document.querySelector(".summary_total").style.color = "black"
 
     tempSavingValue = 0
 
     updateSavingBtn(playerObject.savings)
 
-    let classBtnSavings = ["add_1", "add_2", "remove_1", "remove_2"]
-    classBtnSavings.forEach((className, index) => {
-        document.querySelector("." + className).addEventListener("click", () => {
-            let sign = (index < 2) ? 1 : -1
-            let amount = (index % 2 === 0) ? maxBanknoteValue / 50 : maxBanknoteValue / 5;
-            let savings = playerObject.savings + tempSavingValue
-            if (savings + sign * amount < 0 || savings + sign * amount > maxBanknoteValue * 5) {
-                return
-            }
-            tempSavingValue += sign * amount
-            updateSavingValue(playerObject, tempSavingValue)
-        })
-    })
+    // let classBtnSavings = ["add_1", "add_2", "remove_1", "remove_2"]
+    // classBtnSavings.forEach((className, index) => {
+    //     document.querySelector("." + className).addEventListener("click", () => {
+    //         let sign = (index < 2) ? 1 : -1
+    //         let amount = (index % 2 === 0) ? maxBanknoteValue / 50 : maxBanknoteValue / 5;
+    //         let savings = playerObject.savings + tempSavingValue
+    //         if (savings + sign * amount < 0 || savings + sign * amount > maxBanknoteValue * 5) {
+    //             return
+    //         }
+    //         tempSavingValue += sign * amount
+    //         console.log(tempSavingValue)
+    //         updateSavingValue(playerObject, tempSavingValue)
+    //     })
+    // })
 
     let stocksListPlayer = document.querySelector(".stocks_list_player")
     stocksListPlayer.innerHTML = ""
@@ -545,7 +557,35 @@ function createPlayerTurnView(playerObject) {
     updateBtnInvest(playerObject, tempInvestmentValue)
 }
 
+function addOrRemoveSavings(value) {
+    let savings = playerListObject[actionInTurn].savings + tempSavingValue
+    switch (value) {
+        case 1:
+            if (savings > maxBanknoteValue * 5 - maxBanknoteValue / 50) return
+            tempSavingValue += maxBanknoteValue / 50
+            updateSavingValue(playerListObject[actionInTurn], tempSavingValue)
+            break
+        case 2:
+            if (savings > maxBanknoteValue * 5 - maxBanknoteValue / 5) return
+            tempSavingValue += maxBanknoteValue / 5
+            updateSavingValue(playerListObject[actionInTurn], tempSavingValue)
+            break
+        case -1:
+            if (savings < maxBanknoteValue / 50) return
+            tempSavingValue -= maxBanknoteValue / 50
+            updateSavingValue(playerListObject[actionInTurn], tempSavingValue)
+            break
+        case -2:
+            if (savings < maxBanknoteValue / 5) return
+            tempSavingValue -= maxBanknoteValue / 5
+            updateSavingValue(playerListObject[actionInTurn], tempSavingValue)
+            break
+    }
+}
+
 function updateSavingValue(playerObject, value) {
+    console.log(playerObject)
+    console.log(value)
     let savingsPlayerAddValue = document.querySelector(".savings_player_add_value")
     savingsPlayerAddValue.style.color = (value > 0) ? "green" : "red";
     savingsPlayerAddValue.innerHTML = `${(value > 0) ? "+" : "-"}${Math.abs(value)}€`;
@@ -621,7 +661,7 @@ function updateInvestPlayer(player, compId, type) {
             let summaryInvestValue = document.querySelector(".summary_invest_value")
             let totalInvestValue = 0
             for (let i = 0; i < tempInvestmentValue.length; i++) {
-                totalInvestValue += tempInvestmentValue[i] * (companyListObject[i].capital / 10)
+                totalInvestValue += tempInvestmentValue[i] * Math.round((companyListObject[i].capital / 10) / minBanknoteValue ) * minBanknoteValue
             }
             if (totalInvestValue > 0) {
                 summaryInvestValue.innerHTML = totalInvestValue + "€"
@@ -658,7 +698,7 @@ function updateSummaryTotalValue(tempSavingValue, tempInvestmentValue) {
     let summaryTotal = document.querySelector(".summary_total")
     let totalValue = 0
     for (let i = 0; i < tempInvestmentValue.length; i++) {
-        totalValue += tempInvestmentValue[i] * (companyListObject[i].capital / 10)
+        totalValue += tempInvestmentValue[i] * Math.round((companyListObject[i].capital / 10) / minBanknoteValue ) * minBanknoteValue
     }
     totalValue += tempSavingValue
     summaryTotal.innerHTML = totalValue + "€"
@@ -688,7 +728,7 @@ function createCompanyTurnView(companyObject) {
             min = -20
             max = 20
             break
-        case companySold >= 7 && companySold < 10:
+        case companySold >= 7 && companySold <= 10:
             min = -30
             max = 30
             break
@@ -795,23 +835,37 @@ async function companyWheel() {
     }
 }
 
+let newCapital = 0
+
 function calculateCompanyNewCapital(capital, percentage) {
     if (percentage == 0) return capital
-    let newCapital = Math.round(capital * (1 + (parseInt(percentage) / 100)))
-
-    return Math.round(newCapital / minBanknoteValue) * minBanknoteValue
+    newCapital = Math.round(Math.round(capital * (1 + (parseInt(percentage) / 100))) / minBanknoteValue) * minBanknoteValue
+    console.log(companyListObject[actionInTurn - playerListObject.length])
+    if (newCapital > companyListObject[actionInTurn - playerListObject.length].capitalMax) newCapital = companyListObject[actionInTurn - playerListObject.length].capitalMax
+    return newCapital
 }
 
 // Game turn functions
 
 let actionInTurn = -1
-let confirmationTurn = false
+let confirmationTurn = true
+let specialTurn = false
+let skipTurnSpecial= 1
 
 function nextActionTurn() {
+    if (skipTurnSpecial=== 1) {
+        if (confirmationTurn === false) {
+            return
+        }
+    }
+    skipTurnSpecial= 1
+    document.querySelector(".action_btn").style.animation = "glow 1s ease-in-out infinite alternate"
+    document.querySelector(".turn_btn").style.animation = "none"
+
     confirmationTurn = false
     actionInTurn++
-    console.log("Turn" + turn)
-    console.log(actionInTurn)
+    console.log("Turn " + turn)
+    console.log("Action " + actionInTurn)
 
     if (actionInTurn >= 0 && actionInTurn < playerListObject.length) {
         createPlayerTurnView(playerListObject[actionInTurn])
@@ -826,12 +880,8 @@ function nextActionTurn() {
         document.querySelector(".turn__company").style.display = "flex"
     }
 
-    if (actionInTurn === playerListObject.length + companyListObject.length - 1) {
-        //end turn
-        actionInTurn = -2
-    }
-
-    if (actionInTurn === -1) {
+    if (specialTurn === true) {
+        specialTurn = false
         //test if special turn
         if ((turn % 2 === 0 && turn !== 0) || (turn % 3 === 0 && turn !== 0)) {
             if (turn % 2 === 0 && turn !== 0) {
@@ -854,20 +904,34 @@ function nextActionTurn() {
         } else {
             actionInTurn = -1
             turn++
-            nextActionTurn()
+            skipTurnSpecial++
+            return nextActionTurn()
         }
     }
 }
 
 function turnConfirmation() {
+    document.querySelector(".action_btn").style.animation = "none"
+    document.querySelector(".turn_btn").style.animation = "glow 1s ease-in-out infinite alternate"
+
+    if (actionInTurn === playerListObject.length + companyListObject.length - 1) {
+        //end turn
+        specialTurn = true
+    }
+
     if (actionInTurn >= 0 && actionInTurn < playerListObject.length) {
         document.querySelector(".turn__finish").style.display = "flex"
         document.querySelector(".turn__player").style.display = "none"
+        updateData("player")
     }
 
     if (actionInTurn >= playerListObject.length && actionInTurn < playerListObject.length + companyListObject.length) {
+        if (roll === false) {
+            return
+        }
         document.querySelector(".turn__finish").style.display = "flex"
         document.querySelector(".turn__company").style.display = "none"
+        updateData("company")
     }
 
     if (actionInTurn === -1) {
@@ -876,4 +940,21 @@ function turnConfirmation() {
         document.querySelector(".turn__game").style.display = "none"
     }
     confirmationTurn = true
+    createGameView()
+}
+
+function updateData(type) {
+    switch(type) {
+        case "player":
+            playerListObject[actionInTurn].savings += tempSavingValue
+            for (let i = 0; i < tempInvestmentValue.length; i++) {
+                playerListObject[actionInTurn].stocks[i].quantity += tempInvestmentValue[i]
+                companyListObject[i].sold += tempInvestmentValue[i]
+            }
+            break
+        case "company":
+            companyListObject[actionInTurn - playerListObject.length].capital = newCapital
+            companyListObject[actionInTurn - playerListObject.length].value.push(newCapital)
+            break
+    }    
 }
