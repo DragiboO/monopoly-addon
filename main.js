@@ -44,6 +44,7 @@ document.querySelector(".btn_guide").addEventListener("click", () => {
     document.querySelector(".guide").addEventListener("transitionend", e => {
         if (e.propertyName === "transform") {
             document.querySelector(".guide").remove()
+            document.querySelector(".disc_and_rule").remove()
         }
     })
 })
