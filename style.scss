@@ -26,6 +26,133 @@ body {
     overflow: hidden;
 }
 
+.disclaimer {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: transform 0.25s ease-in-out;
+
+    .disclaimer__display {
+        width: 90%;
+        height: 90%;
+        background-color: var(--main-green);
+        border: black solid 4px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;  
+
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+        }
+
+        .disclaimer_text {
+            font-size: 0.75rem;
+            text-align: justify;
+        }
+
+        h2 {
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.25rem;
+            text-align: justify;
+        }
+
+        :nth-child(5) {
+            flex-grow: 1;
+        }
+
+        input {
+            font-size: 1.5rem;
+            padding: 0.125rem 1rem;
+            border: black solid 3px;
+            border-radius: 10px;
+            background-color: var(--main-green-darken);
+        }
+    }
+}
+
+.guide {
+    position: absolute;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    left: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: transform 0.25s ease-in-out;
+
+    .guide__display {
+        width: 90%;
+        height: 90%;
+        background-color: var(--main-green);
+        border: black solid 4px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        overflow-y: scroll;
+
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.25rem;
+            text-align: justify;
+        }
+
+        li {
+            list-style: none;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            text-align: justify;
+        }
+
+        ol {
+            .action_title {
+                font-size: 1.5rem;
+                text-decoration: underline;
+            }
+
+            li {
+                ul {
+                    margin-top: 0.5rem;
+                }
+            }
+        }
+
+        .add_space {
+            margin-top: 0.5rem;
+        }
+
+        input {
+            font-size: 1.5rem;
+            padding: 0.125rem 1rem;
+            border: black solid 3px;
+            border-radius: 10px;
+            background-color: var(--main-green-darken);
+        }
+    }
+}
+
 .setup {
     background: var(--main-green);
     border: black solid 8px;

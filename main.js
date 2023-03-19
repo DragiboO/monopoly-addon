@@ -24,6 +24,32 @@ class Stocks {
     }
 }
 
+// Disclaimer and How to use part
+
+document.querySelector(".btn_disclaimer").addEventListener("click", () => {
+    document.querySelector(".disclaimer").style.transform = "translateX(-100%)"
+
+    document.querySelector(".disclaimer").addEventListener("transitionend", e => {
+        if (e.propertyName === "transform") {
+            document.querySelector(".disclaimer").remove()
+        }
+    })
+
+    document.querySelector(".guide").style.transform = "translateX(-100%)"
+})
+
+document.querySelector(".btn_guide").addEventListener("click", () => {
+    document.querySelector(".guide").style.transform = "translateX(-200%)"
+
+    document.querySelector(".guide").addEventListener("transitionend", e => {
+        if (e.propertyName === "transform") {
+            document.querySelector(".guide").remove()
+        }
+    })
+})
+
+/////////////////////////
+
 function getRandomInt(max) {
     return Math.floor(Math.random() * max)
 }
@@ -33,8 +59,8 @@ function generateRandomNumber(min, max) {
 }
 
 let colorList = ['#864C39', '#bde0f4', '#C63883', '#de911b', '#DB2428', '#FFF004', '#60ad5b', '#0067A4']
-let playerList = [/*"Player 1", "Player 2", "Player 3", "Player 4", "Player 5", "Player 6", "Player 7", "Player 8"*/]
-let companyList = [/*"Company 1", "Company 2", "Company 3", "Company 4"*/]
+let playerList = []
+let companyList = []
 
 let playerListObject = []
 let companyListObject = []
@@ -209,6 +235,7 @@ function createGameMenu() {
     nextActionTurn()
 
     document.querySelector(".turn_btn").style.animation = "none"
+    document.querySelector(".view_player_1").style.display = "flex"
 
     const numPlayers = playerList.length;
     const numCompanies = companyList.length;
@@ -262,9 +289,6 @@ function createGameMenu() {
     }
 }
 
-// to comment when game is finished
-//createGameMenu()
-
 btnTabPlayer.addEventListener("click", () => {
     gameMenuPlayer.style.display = "flex"
     gameMenuCompany.style.display = "none"
@@ -305,17 +329,6 @@ function createGameObject() {
     })
 
     minBanknoteValue = Math.round(maxBanknoteValue / 500)
-
-    // to count during test
-    // companyListObject.forEach(e => {
-    //     let countSold = 0
-    //     let index = companyListObject.indexOf(e)
-    //     playerListObject.forEach(e => {
-    //         countSold += e.stocks[index].quantity
-    //     })
-    //     e.sold = countSold
-    // })
-    //
 }
 
 function createGameView() {
@@ -421,12 +434,10 @@ let closeAction = document.querySelector(".close_action")
 
 actionBtn.addEventListener("click", () => {
     turnPopup.style.transform = "translateX(100%)"
-    //createGameView()
 })
 
 closeAction.addEventListener("click", () => {
     turnPopup.style.transform = "translateX(0%)"
-    //need to add the view of the actual turn object (player or company) when the popup is closed
 })
 
 turnPopup.addEventListener("click", e => {
@@ -521,21 +532,6 @@ function createPlayerTurnView(playerObject) {
 
     updateSavingBtn(playerObject.savings)
 
-    // let classBtnSavings = ["add_1", "add_2", "remove_1", "remove_2"]
-    // classBtnSavings.forEach((className, index) => {
-    //     document.querySelector("." + className).addEventListener("click", () => {
-    //         let sign = (index < 2) ? 1 : -1
-    //         let amount = (index % 2 === 0) ? maxBanknoteValue / 50 : maxBanknoteValue / 5;
-    //         let savings = playerObject.savings + tempSavingValue
-    //         if (savings + sign * amount < 0 || savings + sign * amount > maxBanknoteValue * 5) {
-    //             return
-    //         }
-    //         tempSavingValue += sign * amount
-    //         console.log(tempSavingValue)
-    //         updateSavingValue(playerObject, tempSavingValue)
-    //     })
-    // })
-
     let stocksListPlayer = document.querySelector(".stocks_list_player")
     stocksListPlayer.innerHTML = ""
 
@@ -584,8 +580,6 @@ function addOrRemoveSavings(value) {
 }
 
 function updateSavingValue(playerObject, value) {
-    console.log(playerObject)
-    console.log(value)
     let savingsPlayerAddValue = document.querySelector(".savings_player_add_value")
     savingsPlayerAddValue.style.color = (value > 0) ? "green" : "red";
     savingsPlayerAddValue.innerHTML = `${(value > 0) ? "+" : "-"}${Math.abs(value)}€`;
@@ -721,15 +715,15 @@ function createCompanyTurnView(companyObject) {
 
     switch (true) {
         case companySold >= 0 && companySold < 4:
-            min = -10
+            min = -5
             max = 10
             break
         case companySold >= 4 && companySold < 7:
-            min = -20
+            min = -10
             max = 20
             break
         case companySold >= 7 && companySold <= 10:
-            min = -30
+            min = -15
             max = 30
             break
     }
@@ -840,7 +834,6 @@ let newCapital = 0
 function calculateCompanyNewCapital(capital, percentage) {
     if (percentage == 0) return capital
     newCapital = Math.round(Math.round(capital * (1 + (parseInt(percentage) / 100))) / minBanknoteValue) * minBanknoteValue
-    console.log(companyListObject[actionInTurn - playerListObject.length])
     if (newCapital > companyListObject[actionInTurn - playerListObject.length].capitalMax) newCapital = companyListObject[actionInTurn - playerListObject.length].capitalMax
     return newCapital
 }
@@ -864,8 +857,6 @@ function nextActionTurn() {
 
     confirmationTurn = false
     actionInTurn++
-    console.log("Turn " + turn)
-    console.log("Action " + actionInTurn)
 
     if (actionInTurn >= 0 && actionInTurn < playerListObject.length) {
         createPlayerTurnView(playerListObject[actionInTurn])
@@ -911,9 +902,6 @@ function nextActionTurn() {
 }
 
 function turnConfirmation() {
-    document.querySelector(".action_btn").style.animation = "none"
-    document.querySelector(".turn_btn").style.animation = "glow 1s ease-in-out infinite alternate"
-
     if (actionInTurn === playerListObject.length + companyListObject.length - 1) {
         //end turn
         specialTurn = true
@@ -923,6 +911,8 @@ function turnConfirmation() {
         document.querySelector(".turn__finish").style.display = "flex"
         document.querySelector(".turn__player").style.display = "none"
         updateData("player")
+        document.querySelector(".action_btn").style.animation = "none"
+        document.querySelector(".turn_btn").style.animation = "glow 1s ease-in-out infinite alternate"
     }
 
     if (actionInTurn >= playerListObject.length && actionInTurn < playerListObject.length + companyListObject.length) {
@@ -932,15 +922,31 @@ function turnConfirmation() {
         document.querySelector(".turn__finish").style.display = "flex"
         document.querySelector(".turn__company").style.display = "none"
         updateData("company")
+        document.querySelector(".action_btn").style.animation = "none"
+        document.querySelector(".turn_btn").style.animation = "glow 1s ease-in-out infinite alternate"
     }
 
     if (actionInTurn === -1) {
         //test if special turn
         document.querySelector(".turn__finish").style.display = "flex"
         document.querySelector(".turn__game").style.display = "none"
+        document.querySelector(".action_btn").style.animation = "none"
+        document.querySelector(".turn_btn").style.animation = "glow 1s ease-in-out infinite alternate"
     }
     confirmationTurn = true
     createGameView()
+
+    let toDisplay = ""
+    if (actionInTurn >= 0 && actionInTurn < playerListObject.length) {
+        toDisplay = `player${actionInTurn + 2}`
+    }
+    if (actionInTurn >= playerListObject.length - 1 && actionInTurn < playerListObject.length + companyListObject.length - 1) {
+        toDisplay = `company${actionInTurn - playerListObject.length + 2}`
+    }
+    if (actionInTurn === playerListObject.length + companyListObject.length - 1 || actionInTurn === -1) {
+        toDisplay = "player1"
+    }
+    gameMenu(toDisplay)
 }
 
 function updateData(type) {
